@@ -94,13 +94,9 @@
     <div class="stat-card"><div class="stat-label">Ukendt</div><div class="stat-value" id="stat-ukendt">—</div></div>
   </div>
   <div class="filter-bar">
-    <div class="filter-group">
+    <div class="filter-group" id="cat-filter-group">
       <span class="filter-label-text">Emne</span>
       <button class="pill active" onclick="setFilter('cat','alle',this)">Alle</button>
-      <button class="pill" onclick="setFilter('cat','Klima',this)">Klima</button>
-      <button class="pill" onclick="setFilter('cat','Økonomi',this)">Økonomi</button>
-      <button class="pill" onclick="setFilter('cat','Sundhed',this)">Sundhed</button>
-      <button class="pill" onclick="setFilter('cat','Udlændinge',this)">Udlændinge</button>
     </div>
     <div class="filter-group">
       <span class="filter-label-text">Resultat</span>
@@ -164,10 +160,20 @@ function shortenTitle(raw) {
 
 function categorize(t) {
   t = (t||'').toLowerCase();
-  if (t.includes('klima')||t.includes('co2')||t.includes('miljø')||t.includes('grøn')||t.includes('energi')||t.includes('vedvarende')) return 'Klima';
-  if (t.includes('skat')||t.includes('afgift')||t.includes('budget')||t.includes('økonomi')||t.includes('bolig')||t.includes('erhverv')||t.includes('pension')||t.includes('ydelse')) return 'Økonomi';
-  if (t.includes('sundhed')||t.includes('hospital')||t.includes('læge')||t.includes('patient')||t.includes('psykia')||t.includes('medicin')) return 'Sundhed';
-  if (t.includes('udlænd')||t.includes('asyl')||t.includes('flygtning')||t.includes('indvandring')||t.includes('opholds')||t.includes('statsborgerskab')) return 'Udlændinge';
+  if (t.includes('klima')||t.includes('co2')||t.includes('miljø')||t.includes('grøn')||t.includes('energi')||t.includes('vedvarende')||t.includes('bæredygt')) return 'Klima og energi';
+  if (t.includes('skat')||t.includes('afgift')||t.includes('budget')||t.includes('økonomi')||t.includes('oekonomi')||t.includes('erhverv')||t.includes('finans')||t.includes('moms')) return 'Økonomi og skat';
+  if (t.includes('bolig')||t.includes('husleje')||t.includes('byfornyelse')||t.includes('planlov')||t.includes('landzone')||t.includes('byggeri')) return 'Bolig og byggeri';
+  if (t.includes('sundhed')||t.includes('hospital')||t.includes('læge')||t.includes('laege')||t.includes('patient')||t.includes('psykia')||t.includes('medicin')||t.includes('ældre')||t.includes('aeldre')) return 'Sundhed og ældre';
+  if (t.includes('udlænd')||t.includes('udlaend')||t.includes('asyl')||t.includes('flygtning')||t.includes('indvandring')||t.includes('opholds')||t.includes('statsborgerskab')||t.includes('integration')) return 'Udlændinge og integration';
+  if (t.includes('social')||t.includes('kontanthjælp')||t.includes('kontanthjaelp')||t.includes('dagpenge')||t.includes('pension')||t.includes('ydelse')||t.includes('udsat')) return 'Social og beskæftigelse';
+  if (t.includes('arbejdsmarked')||t.includes('arbejde')||t.includes('beskæftig')||t.includes('løn')||t.includes('loen')||t.includes('overenskomst')) return 'Arbejdsmarked';
+  if (t.includes('uddannelse')||t.includes('skole')||t.includes('folkeskole')||t.includes('universitet')||t.includes('børn')||t.includes('boern')||t.includes('unge')||t.includes('dagtilbud')) return 'Uddannelse og børn';
+  if (t.includes('ret')||t.includes('domstol')||t.includes('kriminal')||t.includes('politi')||t.includes('straf')||t.includes('justits')) return 'Ret og justits';
+  if (t.includes('forsvar')||t.includes('militær')||t.includes('militaer')||t.includes('beredskab')||t.includes('sikkerhed')||t.includes('terror')) return 'Forsvar og sikkerhed';
+  if (t.includes('eu')||t.includes('europa')||t.includes('udenrig')||t.includes('nato')||t.includes('grønland')||t.includes('groenland')||t.includes('færø')||t.includes('faeroe')) return 'EU og udenrig';
+  if (t.includes('transport')||t.includes('trafik')||t.includes('jernbane')||t.includes('tog')||t.includes('bil')||t.includes('vej')||t.includes('post')) return 'Transport og infrastruktur';
+  if (t.includes('kultur')||t.includes('medie')||t.includes('kirke')||t.includes('idræt')||t.includes('idraet')||t.includes('fritid')) return 'Kultur og medier';
+  if (t.includes('digital')||t.includes('it')||t.includes('data')||t.includes('cyber')||t.includes('teknologi')||t.includes('ai')) return 'Digitalisering';
   return 'Andet';
 }
 
@@ -245,6 +251,52 @@ function updateStats(v) {
   document.getElementById('stat-vedtaget').textContent  = v.filter(x=>x.result==='vedtaget').length;
   document.getElementById('stat-forkastet').textContent = v.filter(x=>x.result==='forkastet').length;
   document.getElementById('stat-ukendt').textContent    = v.filter(x=>x.result==='ukendt').length;
+}
+
+function renderCategoryFilters() {
+  const group = document.getElementById('cat-filter-group');
+  if (!group) return;
+
+  const categories = [...new Set(allVotes.map(v => v.category).filter(Boolean))];
+  const knownOrder = [
+    'Klima og energi',
+    'Økonomi og skat',
+    'Social og beskæftigelse',
+    'Arbejdsmarked',
+    'Sundhed og ældre',
+    'Uddannelse og børn',
+    'Udlændinge og integration',
+    'Ret og justits',
+    'Forsvar og sikkerhed',
+    'EU og udenrig',
+    'Transport og infrastruktur',
+    'Bolig og byggeri',
+    'Digitalisering',
+    'Kultur og medier',
+    'Andet'
+  ];
+  categories.sort((a, b) => {
+    const ai = knownOrder.indexOf(a);
+    const bi = knownOrder.indexOf(b);
+    if (ai >= 0 && bi >= 0) return ai - bi;
+    if (ai >= 0) return -1;
+    if (bi >= 0) return 1;
+    return a.localeCompare(b, 'da');
+  });
+
+  if (filters.cat !== 'alle' && !categories.includes(filters.cat)) filters.cat = 'alle';
+
+  group.innerHTML = '<span class="filter-label-text">Emne</span>';
+  const addBtn = (value, label, active) => {
+    const btn = document.createElement('button');
+    btn.className = active ? 'pill active' : 'pill';
+    btn.textContent = label;
+    btn.onclick = () => setFilter('cat', value, btn);
+    group.appendChild(btn);
+  };
+
+  addBtn('alle', 'Alle', filters.cat === 'alle');
+  categories.forEach(cat => addBtn(cat, cat, filters.cat === cat));
 }
 
 function renderVotes() {
@@ -402,6 +454,7 @@ async function loadMore() {
     nextUrl = data['@odata.nextLink'] || null;
     const { titleMap, categoryMap } = await fetchMetaInBatches(data.value||[]);
     allVotes = allVotes.concat(mapItems(data.value||[], titleMap, categoryMap));
+    renderCategoryFilters();
     updateStats(allVotes); renderVotes();
   } catch(e) { debug('loadMore fejl: '+e.message); }
   btn.disabled=false; btn.textContent='Vis flere afstemninger';
@@ -431,6 +484,7 @@ async function init() {
     allVotes = mapItems(items, titleMap, categoryMap);
 
     document.getElementById('loading-bar').style.display = 'none';
+    renderCategoryFilters();
     updateStats(allVotes);
     renderVotes();
 
@@ -446,6 +500,7 @@ async function init() {
     debug('FEJL: ' + e.message);
     document.getElementById('loading-bar').style.display = 'none';
     allVotes = getMockVotes();
+    renderCategoryFilters();
     updateStats(allVotes);
     renderVotes();
   }

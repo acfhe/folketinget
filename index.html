@@ -7,176 +7,92 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #f0efe9;
-    --border: rgba(0,0,0,0.08);
-    --border-strong: rgba(0,0,0,0.15);
-    --text: #1a1a18;
-    --text-2: #6b6b66;
-    --text-3: #9e9e98;
-    --green: #2d6a2d;
-    --green-bg: #e8f5e8;
-    --red: #8b1a1a;
-    --red-bg: #faeaea;
-    --blue: #1a3d6b;
-    --blue-bg: #e8f0fa;
-    --gray: #5f5e5a;
-    --gray-bg: #f0efe9;
-    --accent: #2d5a3d;
-    --radius: 12px;
+    --bg: #f5f4f0; --surface: #ffffff; --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.15);
+    --text: #1a1a18; --text-2: #6b6b66; --text-3: #9e9e98;
+    --green: #2d6a2d; --green-bg: #e8f5e8;
+    --red: #8b1a1a; --red-bg: #faeaea;
+    --blue: #1a3d6b; --blue-bg: #e8f0fa;
+    --gray: #5f5e5a; --gray-bg: #f0efe9;
+    --accent: #2d5a3d; --radius: 12px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.5;
-  }
-
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.5; }
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
   .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; letter-spacing: -0.3px; }
-  .logo-mark {
-    width: 28px; height: 28px; background: var(--accent); border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 13px; font-weight: 600; font-family: 'DM Mono', monospace;
-  }
+  .logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 600; font-family: 'DM Mono', monospace; }
   .header-meta { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; }
-
   main { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
   .page-title { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 4px; }
-  .page-sub   { font-size: 14px; color: var(--text-2); margin-bottom: 1.75rem; }
-
+  .page-sub { font-size: 14px; color: var(--text-2); margin-bottom: 1.75rem; }
   .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 1.75rem; }
   .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
   .stat-label { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
   .stat-value { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; }
   .stat-value.green { color: var(--green); }
   .stat-value.red   { color: var(--red); }
-
-  .filter-bar {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 1rem 1.25rem;
-    margin-bottom: 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
-  }
+  .filter-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
   .filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .filter-label-text { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; white-space: nowrap; }
-
-  .pill {
-    padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border-strong);
-    background: transparent; font-size: 13px; font-family: 'DM Sans', sans-serif;
-    cursor: pointer; color: var(--text-2); transition: all 0.15s;
-  }
-  .pill:hover        { background: var(--surface2); }
+  .pill { padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border-strong); background: transparent; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; color: var(--text-2); transition: all 0.15s; }
+  .pill:hover { background: var(--surface2); }
   .pill.active       { background: var(--text);     color: white;        border-color: var(--text); }
   .pill.active-green { background: var(--green-bg); color: var(--green); border-color: var(--green); }
   .pill.active-red   { background: var(--red-bg);   color: var(--red);   border-color: var(--red); }
-
   .legend { display: flex; gap: 14px; font-size: 12px; color: var(--text-2); margin-bottom: 1.25rem; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 5px; }
-  .legend-dot  { width: 8px; height: 8px; border-radius: 2px; }
-
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
   .votes-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .vote-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 1.25rem; transition: border-color 0.15s;
-  }
+  .vote-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; transition: border-color 0.15s; }
   .vote-card:hover { border-color: var(--border-strong); }
-
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 3px; }
   .vote-short-title { font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--text); flex: 1; letter-spacing: -0.2px; }
   .vote-date { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; white-space: nowrap; margin-top: 3px; }
   .vote-full-title { font-size: 12px; color: var(--text-3); line-height: 1.4; margin-bottom: 10px; font-style: italic; }
-
   .card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
   .badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; font-family: 'DM Mono', monospace; }
   .badge-cat       { background: var(--blue-bg);  color: var(--blue); }
   .badge-vedtaget  { background: var(--green-bg); color: var(--green); }
   .badge-forkastet { background: var(--red-bg);   color: var(--red); }
   .badge-ukendt    { background: var(--gray-bg);  color: var(--gray); }
-
   .vote-bar { height: 5px; border-radius: 3px; background: var(--surface2); overflow: hidden; display: flex; margin-bottom: 5px; }
-  .bar-for { background: #2d6a2d; }
-  .bar-mod { background: #c0392b; }
-  .bar-und { background: #c8c7c0; }
-
+  .bar-for { background: #2d6a2d; } .bar-mod { background: #c0392b; } .bar-und { background: #c8c7c0; }
   .vote-counts { display: flex; gap: 14px; font-size: 12px; font-family: 'DM Mono', monospace; margin-bottom: 10px; }
-  .count-for { color: var(--green); }
-  .count-mod { color: var(--red); }
-  .count-und { color: var(--text-3); }
-
-  .parties-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(44px,1fr));
-    gap: 5px; padding-top: 10px; border-top: 1px solid var(--border);
-  }
+  .count-for { color: var(--green); } .count-mod { color: var(--red); } .count-und { color: var(--text-3); }
+  .parties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px,1fr)); gap: 5px; padding-top: 10px; border-top: 1px solid var(--border); }
   .party-chip { text-align: center; padding: 4px 3px; border-radius: 6px; }
   .party-abbr       { display: block; font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; }
   .party-vote-label { display: block; font-size: 9px; margin-top: 1px; font-family: 'DM Mono', monospace; }
   .chip-for { background: var(--green-bg); color: var(--green); }
   .chip-mod { background: var(--red-bg);   color: var(--red); }
   .chip-und { background: var(--surface2); color: var(--text-3); }
-
   .load-more-wrap { text-align: center; margin-top: 1.5rem; }
-  .load-more-btn {
-    padding: 10px 28px; border-radius: 20px; border: 1px solid var(--border-strong);
-    background: var(--surface); font-size: 14px; font-family: 'DM Sans', sans-serif;
-    cursor: pointer; color: var(--text-2); transition: all 0.15s;
-  }
+  .load-more-btn { padding: 10px 28px; border-radius: 20px; border: 1px solid var(--border-strong); background: var(--surface); font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; color: var(--text-2); transition: all 0.15s; }
   .load-more-btn:hover { background: var(--surface2); }
   .load-more-btn:disabled { opacity: 0.4; cursor: default; }
-
   .status-msg { text-align: center; padding: 3rem; color: var(--text-2); font-size: 14px; }
-
   .loading-bar { height: 3px; background: var(--green-bg); border-radius: 2px; margin-bottom: 1rem; overflow: hidden; }
   .loading-bar-inner { height: 100%; width: 30%; background: var(--green); border-radius: 2px; animation: slide 1.2s ease-in-out infinite; }
   @keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
-
-  @media (max-width: 640px) {
-    .stats-row { grid-template-columns: repeat(2,1fr); }
-    header { padding: 0 1rem; }
-    main   { padding: 1.25rem 1rem; }
-    .filter-bar { gap: 1rem; }
-  }
+  .debug-box { background: #fff8e1; border: 1px solid #f0c040; border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 12px; font-family: 'DM Mono', monospace; color: #5a4000; line-height: 1.7; display: none; }
+  .debug-box.visible { display: block; }
+  @media (max-width: 640px) { .stats-row { grid-template-columns: repeat(2,1fr); } header { padding: 0 1rem; } main { padding: 1.25rem 1rem; } }
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">
-    <div class="logo-mark">FT</div>
-    Folketing Dashboard
-  </div>
+  <div class="logo"><div class="logo-mark">FT</div>Folketing Dashboard</div>
   <div class="header-meta" id="last-updated">Henter data...</div>
 </header>
-
 <main>
   <div class="page-title">Afstemninger</div>
   <p class="page-sub">Seneste afstemninger fra Folketinget — hvem stemte hvad og hvad blev resultatet.</p>
-
   <div class="stats-row">
     <div class="stat-card"><div class="stat-label">Vist</div><div class="stat-value" id="stat-total">—</div></div>
     <div class="stat-card"><div class="stat-label">Vedtaget</div><div class="stat-value green" id="stat-vedtaget">—</div></div>
     <div class="stat-card"><div class="stat-label">Forkastet</div><div class="stat-value red" id="stat-forkastet">—</div></div>
     <div class="stat-card"><div class="stat-label">Ukendt</div><div class="stat-value" id="stat-ukendt">—</div></div>
   </div>
-
   <div class="filter-bar">
     <div class="filter-group">
       <span class="filter-label-text">Emne</span>
@@ -193,72 +109,61 @@
       <button class="pill" onclick="setFilter('res','forkastet',this)">Forkastet</button>
     </div>
   </div>
-
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#2d6a2d"></div> Stemte for</div>
     <div class="legend-item"><div class="legend-dot" style="background:#c0392b"></div> Stemte imod</div>
     <div class="legend-item"><div class="legend-dot" style="background:#c8c7c0"></div> Undlod / fraværende</div>
   </div>
-
+  <div id="debug-box" class="debug-box"></div>
   <div id="loading-bar" class="loading-bar"><div class="loading-bar-inner"></div></div>
-  <div class="votes-list" id="votes-container">
-    <div class="status-msg">Henter afstemninger fra Folketinget...</div>
-  </div>
-  <div class="load-more-wrap">
-    <button class="load-more-btn" id="load-more-btn" onclick="loadMore()" style="display:none">Vis flere afstemninger</button>
-  </div>
+  <div class="votes-list" id="votes-container"><div class="status-msg">Henter afstemninger fra Folketinget...</div></div>
+  <div class="load-more-wrap"><button class="load-more-btn" id="load-more-btn" onclick="loadMore()" style="display:none">Vis flere afstemninger</button></div>
 </main>
 
 <script>
 const PARTIES = ['S','V','M','SF','DF','EL','RV','LA','K','NB','ALT','DD','FG'];
-const PARTY_NAMES = {
-  S:'Socialdemokratiet', V:'Venstre', M:'Moderaterne', SF:'SF',
-  DF:'Dansk Folkeparti', EL:'Enhedslisten', RV:'Radikale Venstre',
-  LA:'Liberal Alliance', K:'Konservative', NB:'Nye Borgerlige',
-  ALT:'Alternativet', DD:'Danmarksdemokraterne', FG:'Frie Grønne'
-};
+const PARTY_NAMES = { S:'Socialdemokratiet',V:'Venstre',M:'Moderaterne',SF:'SF',DF:'Dansk Folkeparti',EL:'Enhedslisten',RV:'Radikale Venstre',LA:'Liberal Alliance',K:'Konservative',NB:'Nye Borgerlige',ALT:'Alternativet',DD:'Danmarksdemokraterne',FG:'Frie Grønne' };
 
-let allVotes  = [];
-let nextUrl   = null;
-let filters   = { cat: 'alle', res: 'alle' };
-const PAGE    = 50; // hent 50 ad gangen
+let allVotes = [], nextUrl = null;
+let filters = { cat:'alle', res:'alle' };
+const log = [];
 
-function parseResult(konklusion) {
-  if (!konklusion) return 'ukendt';
-  const k = konklusion.toLowerCase();
-  if (k.includes('vedtaget'))   return 'vedtaget';
-  if (k.includes('forkastet'))  return 'forkastet';
-  if (k.includes('bortfaldet')) return 'forkastet';
+function debug(msg) {
+  log.push(msg);
+  const box = document.getElementById('debug-box');
+  box.classList.add('visible');
+  box.innerHTML = '<strong>Status:</strong><br>' + log.join('<br>');
+}
+
+function parseResult(k) {
+  if (!k) return 'ukendt';
+  const t = k.toLowerCase();
+  if (t.includes('vedtaget'))  return 'vedtaget';
+  if (t.includes('forkastet') || t.includes('bortfaldet')) return 'forkastet';
   return 'ukendt';
 }
 
-function parseCounts(konklusion) {
-  if (!konklusion) return null;
-  const forM = konklusion.match(/[Ff]or stemte\s+(\d+)/);
-  const modM = konklusion.match(/[Ii]mod stemte\s+(\d+)/);
-  const undM = konklusion.match(/hverken for eller imod stemte\s+(\d+)/i);
-  if (!forM) return null;
-  return { for: parseInt(forM[1]), mod: modM ? parseInt(modM[1]) : 0, und: undM ? parseInt(undM[1]) : 0 };
+function parseCounts(k) {
+  if (!k) return null;
+  const f = k.match(/[Ff]or stemte\s+(\d+)/);
+  const m = k.match(/[Ii]mod stemte\s+(\d+)/);
+  const u = k.match(/hverken for eller imod stemte\s+(\d+)/i);
+  if (!f) return null;
+  return { for: parseInt(f[1]), mod: m ? parseInt(m[1]) : 0, und: u ? parseInt(u[1]) : 0 };
 }
 
 function shortenTitle(raw) {
   if (!raw) return 'Ukendt forslag';
-  const parenMatch = raw.match(/\(([^)]{15,})\)/);
-  if (parenMatch) {
-    let t = parenMatch[1].trim();
-    t = t.charAt(0).toUpperCase() + t.slice(1);
-    return t.length > 90 ? t.slice(0,88)+'…' : t;
-  }
-  let t = raw
-    .replace(/^Forslag til (folketingsbeslutning om|lov om ændring af [^–—:,(]+)/i,'')
-    .replace(/^om\s+/i,'').trim();
-  t = t.charAt(0).toUpperCase() + t.slice(1);
-  if (t.length > 80) { const c = t.indexOf(','); if (c > 20) t = t.slice(0,c); }
-  return t.length > 90 ? t.slice(0,88)+'…' : (t || raw.slice(0,80));
+  const p = raw.match(/\(([^)]{15,})\)/);
+  if (p) { let t = p[1].trim(); t = t[0].toUpperCase()+t.slice(1); return t.length>90?t.slice(0,88)+'…':t; }
+  let t = raw.replace(/^Forslag til (folketingsbeslutning om|lov om ændring af [^–—:,(]+)/i,'').replace(/^om\s+/i,'').trim();
+  t = t[0].toUpperCase()+t.slice(1);
+  if (t.length>80) { const c=t.indexOf(','); if(c>20) t=t.slice(0,c); }
+  return t.length>90?t.slice(0,88)+'…':(t||raw.slice(0,80));
 }
 
-function categorize(title) {
-  const t = (title||'').toLowerCase();
+function categorize(t) {
+  t = (t||'').toLowerCase();
   if (t.includes('klima')||t.includes('co2')||t.includes('miljø')||t.includes('grøn')||t.includes('energi')||t.includes('vedvarende')) return 'Klima';
   if (t.includes('skat')||t.includes('afgift')||t.includes('budget')||t.includes('økonomi')||t.includes('bolig')||t.includes('erhverv')||t.includes('pension')||t.includes('ydelse')) return 'Økonomi';
   if (t.includes('sundhed')||t.includes('hospital')||t.includes('læge')||t.includes('patient')||t.includes('psykia')||t.includes('medicin')) return 'Sundhed';
@@ -266,159 +171,136 @@ function categorize(title) {
   return 'Andet';
 }
 
-function formatDate(str) {
-  if (!str) return '';
-  return new Date(str).toLocaleDateString('da-DK', {day:'numeric',month:'short',year:'numeric'});
+function formatDate(s) {
+  if (!s) return '';
+  return new Date(s).toLocaleDateString('da-DK',{day:'numeric',month:'short',year:'numeric'});
 }
 
 function makeParties(result) {
-  const parties = {};
-  const won = result === 'vedtaget';
-  PARTIES.forEach(p => {
-    const x = Math.random();
-    parties[p] = won
-      ? (x < 0.58 ? 'for' : x < 0.80 ? 'mod' : 'und')
-      : (x < 0.28 ? 'for' : x < 0.82 ? 'mod' : 'und');
-  });
-  return parties;
-}
-
-function mapItem(item) {
-  const sag      = item.sagstrin && item.sagstrin.sag;
-  const sagTitel = sag && sag.titel ? sag.titel.trim() : null;
-  const fullTitle = sagTitel || ('Afstemning #' + item.id);
-  const result    = parseResult(item.konklusion);
-  return {
-    id: item.id,
-    fullTitle,
-    shortTitle: shortenTitle(fullTitle),
-    date:       (item.opdateringsdato || '').split('T')[0],
-    category:   categorize(fullTitle),
-    result,
-    realCounts: parseCounts(item.konklusion),
-    parties:    makeParties(result),
-  };
+  const p={}, won=result==='vedtaget';
+  PARTIES.forEach(k=>{ const x=Math.random(); p[k]=won?(x<.58?'for':x<.80?'mod':'und'):(x<.28?'for':x<.82?'mod':'und'); });
+  return p;
 }
 
 function setFilter(type, val, btn) {
-  filters[type] = val;
-  btn.parentElement.querySelectorAll('.pill').forEach(b =>
-    b.classList.remove('active','active-green','active-red')
-  );
-  if (val === 'vedtaget')       btn.classList.add('active-green');
-  else if (val === 'forkastet') btn.classList.add('active-red');
-  else                          btn.classList.add('active');
+  filters[type]=val;
+  btn.parentElement.querySelectorAll('.pill').forEach(b=>b.classList.remove('active','active-green','active-red'));
+  if(val==='vedtaget') btn.classList.add('active-green');
+  else if(val==='forkastet') btn.classList.add('active-red');
+  else btn.classList.add('active');
   renderVotes();
 }
 
-function updateStats(votes) {
-  document.getElementById('stat-total').textContent    = votes.length;
-  document.getElementById('stat-vedtaget').textContent = votes.filter(v=>v.result==='vedtaget').length;
-  document.getElementById('stat-forkastet').textContent= votes.filter(v=>v.result==='forkastet').length;
-  document.getElementById('stat-ukendt').textContent   = votes.filter(v=>v.result==='ukendt').length;
+function updateStats(v) {
+  document.getElementById('stat-total').textContent    = v.length;
+  document.getElementById('stat-vedtaget').textContent = v.filter(x=>x.result==='vedtaget').length;
+  document.getElementById('stat-forkastet').textContent= v.filter(x=>x.result==='forkastet').length;
+  document.getElementById('stat-ukendt').textContent   = v.filter(x=>x.result==='ukendt').length;
 }
 
 function renderVotes() {
   const container = document.getElementById('votes-container');
-  let filtered = allVotes;
-  if (filters.cat !== 'alle') filtered = filtered.filter(v => v.category === filters.cat);
-  if (filters.res !== 'alle') filtered = filtered.filter(v => v.result   === filters.res);
+  let f = allVotes;
+  if (filters.cat!=='alle') f=f.filter(v=>v.category===filters.cat);
+  if (filters.res!=='alle') f=f.filter(v=>v.result===filters.res);
+  if (f.length===0) { container.innerHTML='<div class="status-msg">Ingen afstemninger matcher dit filter.</div>'; return; }
 
-  if (filtered.length === 0) {
-    container.innerHTML = '<div class="status-msg">Ingen afstemninger matcher dit filter.</div>';
-    return;
-  }
-
-  container.innerHTML = filtered.map(vote => {
-    let forC, modC, undC, total;
-    if (vote.realCounts) {
-      ({ for: forC, mod: modC, und: undC } = vote.realCounts);
-      total = forC + modC + undC || 1;
-    } else {
-      forC  = PARTIES.filter(p => vote.parties[p]==='for').length;
-      modC  = PARTIES.filter(p => vote.parties[p]==='mod').length;
-      undC  = PARTIES.filter(p => vote.parties[p]==='und').length;
-      total = PARTIES.length;
-    }
-    const forPct = Math.round(forC/total*100);
-    const modPct = Math.round(modC/total*100);
-    const undPct = 100 - forPct - modPct;
-
-    const resultBadge =
-      vote.result === 'vedtaget'  ? `<span class="badge badge-vedtaget">Vedtaget</span>`  :
-      vote.result === 'forkastet' ? `<span class="badge badge-forkastet">Forkastet</span>` :
-                                    `<span class="badge badge-ukendt">Ukendt</span>`;
-
-    const chips = PARTIES.map(p => {
-      const v   = vote.parties[p]||'und';
-      const cls = v==='for'?'chip-for':v==='mod'?'chip-mod':'chip-und';
-      const lbl = v==='for'?'For':v==='mod'?'Imod':'Und.';
-      return `<div class="party-chip ${cls}" title="${PARTY_NAMES[p]}: ${lbl}">
-        <span class="party-abbr">${p}</span>
-        <span class="party-vote-label">${lbl}</span>
-      </div>`;
-    }).join('');
-
-    const showFull = vote.fullTitle && vote.shortTitle !== vote.fullTitle && vote.fullTitle.length > vote.shortTitle.length + 10;
-    const fullHtml = showFull ? `<div class="vote-full-title">${vote.fullTitle}</div>` : '';
-
+  container.innerHTML = f.map(vote => {
+    let forC,modC,undC,total;
+    if (vote.realCounts) { ({for:forC,mod:modC,und:undC}=vote.realCounts); total=forC+modC+undC||1; }
+    else { forC=PARTIES.filter(p=>vote.parties[p]==='for').length; modC=PARTIES.filter(p=>vote.parties[p]==='mod').length; undC=PARTIES.filter(p=>vote.parties[p]==='und').length; total=PARTIES.length; }
+    const fp=Math.round(forC/total*100), mp=Math.round(modC/total*100), up=100-fp-mp;
+    const rb = vote.result==='vedtaget'?`<span class="badge badge-vedtaget">Vedtaget</span>`:vote.result==='forkastet'?`<span class="badge badge-forkastet">Forkastet</span>`:`<span class="badge badge-ukendt">Ukendt</span>`;
+    const chips = PARTIES.map(p=>{ const v=vote.parties[p]||'und',cls=v==='for'?'chip-for':v==='mod'?'chip-mod':'chip-und',lbl=v==='for'?'For':v==='mod'?'Imod':'Und.'; return `<div class="party-chip ${cls}" title="${PARTY_NAMES[p]}: ${lbl}"><span class="party-abbr">${p}</span><span class="party-vote-label">${lbl}</span></div>`; }).join('');
+    const showFull = vote.fullTitle && vote.shortTitle!==vote.fullTitle && vote.fullTitle.length>vote.shortTitle.length+10;
     return `<div class="vote-card">
-      <div class="card-top">
-        <div class="vote-short-title">${vote.shortTitle}</div>
-        <div class="vote-date">${formatDate(vote.date)}</div>
-      </div>
-      ${fullHtml}
-      <div class="card-badges">
-        <span class="badge badge-cat">${vote.category}</span>
-        ${resultBadge}
-      </div>
-      <div class="vote-bar">
-        <div class="bar-for" style="width:${forPct}%"></div>
-        <div class="bar-mod" style="width:${modPct}%"></div>
-        <div class="bar-und" style="width:${undPct}%"></div>
-      </div>
-      <div class="vote-counts">
-        <span class="count-for">${forC} for</span>
-        <span class="count-mod">${modC} imod</span>
-        <span class="count-und">${undC} undlod</span>
-      </div>
+      <div class="card-top"><div class="vote-short-title">${vote.shortTitle}</div><div class="vote-date">${formatDate(vote.date)}</div></div>
+      ${showFull?`<div class="vote-full-title">${vote.fullTitle}</div>`:''}
+      <div class="card-badges"><span class="badge badge-cat">${vote.category}</span>${rb}</div>
+      <div class="vote-bar"><div class="bar-for" style="width:${fp}%"></div><div class="bar-mod" style="width:${mp}%"></div><div class="bar-und" style="width:${up}%"></div></div>
+      <div class="vote-counts"><span class="count-for">${forC} for</span><span class="count-mod">${modC} imod</span><span class="count-und">${undC} undlod</span></div>
       <div class="parties-grid">${chips}</div>
     </div>`;
   }).join('');
 }
 
+// Hent afstemninger — prøv først med $expand, derefter uden hvis det fejler
 async function fetchPage(url) {
+  debug('Henter: ' + url);
   const res  = await fetch(url);
+  debug('HTTP status: ' + res.status);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
+  debug('Modtog ' + (data.value||[]).length + ' afstemninger');
   nextUrl = data['@odata.nextLink'] || null;
-  return (data.value || []).map(mapItem);
+  return data.value || [];
+}
+
+async function fetchWithTitles(baseItems) {
+  // Forsøg at hente sagstitler via sagstrinid
+  const ids = baseItems.map(i => i.sagstrinid).filter(Boolean);
+  if (ids.length === 0) return {};
+
+  debug('Henter sagstitler for ' + ids.length + ' sager...');
+  const titleMap = {};
+  try {
+    // Hent sager i ét kald via filter
+    const filter = ids.slice(0,20).map(id => `id eq ${id}`).join(' or ');
+    const url = `https://oda.ft.dk/api/Sagstrin?$filter=${encodeURIComponent(filter)}&$expand=sag($select=titel)&$format=json`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error('sagstrin HTTP ' + res.status);
+    const data = await res.json();
+    (data.value||[]).forEach(st => {
+      if (st.sag && st.sag.titel) titleMap[st.id] = st.sag.titel.trim();
+    });
+    debug('Fik ' + Object.keys(titleMap).length + ' titler');
+  } catch(e) {
+    debug('Sagstitel-opslag fejlede: ' + e.message);
+  }
+  return titleMap;
+}
+
+function mapItems(items, titleMap) {
+  return items.map(item => {
+    const fullTitle = titleMap[item.sagstrinid] || ('Afstemning #' + item.id);
+    const result    = parseResult(item.konklusion);
+    return {
+      id: item.id,
+      fullTitle,
+      shortTitle: shortenTitle(fullTitle),
+      date:       (item.opdateringsdato||'').split('T')[0],
+      category:   categorize(fullTitle),
+      result,
+      realCounts: parseCounts(item.konklusion),
+      parties:    makeParties(result),
+    };
+  });
 }
 
 async function loadMore() {
   if (!nextUrl) return;
   const btn = document.getElementById('load-more-btn');
-  btn.disabled = true;
-  btn.textContent = 'Henter...';
+  btn.disabled=true; btn.textContent='Henter...';
   try {
-    const more = await fetchPage(nextUrl);
-    allVotes = allVotes.concat(more);
-    updateStats(allVotes);
-    renderVotes();
-  } catch(e) { console.warn('loadMore fejl:', e); }
-  btn.disabled = false;
-  btn.textContent = 'Vis flere afstemninger';
+    const items = await fetchPage(nextUrl);
+    const titleMap = await fetchWithTitles(items);
+    allVotes = allVotes.concat(mapItems(items, titleMap));
+    updateStats(allVotes); renderVotes();
+  } catch(e) { debug('loadMore fejl: '+e.message); }
+  btn.disabled=false; btn.textContent='Vis flere afstemninger';
   btn.style.display = nextUrl ? 'inline-block' : 'none';
 }
 
 async function init() {
   try {
-    const url = 'https://oda.ft.dk/api/Afstemning'
-      + '?$orderby=id%20desc'
-      + '&$top=' + PAGE
-      + '&$format=json'
-      + '&$expand=sagstrin($expand=sag($select=titel))';
+    // Trin 1: hent afstemninger uden expand
+    const url = 'https://oda.ft.dk/api/Afstemning?$orderby=id%20desc&$top=50&$format=json';
+    const items = await fetchPage(url);
 
-    allVotes = await fetchPage(url);
+    // Trin 2: hent titler separat
+    const titleMap = await fetchWithTitles(items);
+
+    allVotes = mapItems(items, titleMap);
     document.getElementById('loading-bar').style.display = 'none';
     updateStats(allVotes);
     renderVotes();
@@ -429,8 +311,13 @@ async function init() {
     const now = new Date().toLocaleString('da-DK',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     document.getElementById('last-updated').textContent = 'Opdateret ' + now;
 
+    // Skjul debug hvis alt gik godt
+    if (allVotes.length > 0 && Object.keys(titleMap).length > 0) {
+      document.getElementById('debug-box').style.display = 'none';
+    }
+
   } catch(e) {
-    console.warn('API fejl, bruger eksempeldata:', e);
+    debug('FEJL: ' + e.message + ' — viser demodata');
     document.getElementById('loading-bar').style.display = 'none';
     allVotes = getMockVotes();
     updateStats(allVotes);
@@ -440,20 +327,19 @@ async function init() {
 
 function getMockVotes() {
   const raw = [
-    { id:1, fullTitle:'Forslag til lov om ændring af lov om fremme af vedvarende energi og biobrændstofloven', date:'2026-03-20', result:'vedtaget', realCounts:{for:81,mod:24,und:1}, parties:{S:'for',V:'mod',M:'for',SF:'for',DF:'mod',EL:'for',RV:'for',LA:'mod',K:'mod',NB:'mod',ALT:'for',DD:'mod',FG:'for'} },
-    { id:2, fullTitle:'Forslag til lov om ændring af kildeskatteloven (Nedsættelse af marginalskat for høje indkomster)', date:'2026-03-19', result:'forkastet', realCounts:{for:36,mod:65,und:5}, parties:{S:'mod',V:'for',M:'for',SF:'mod',DF:'for',EL:'mod',RV:'und',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'for',FG:'mod'} },
-    { id:3, fullTitle:'Forslag til lov om ændring af udlændingeloven (Skærpede regler for familiesammenføring)', date:'2026-03-18', result:'vedtaget', realCounts:{for:90,mod:20,und:2}, parties:{S:'for',V:'for',M:'for',SF:'mod',DF:'for',EL:'mod',RV:'mod',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'for',FG:'mod'} },
-    { id:4, fullTitle:'Forslag til lov om ændring af sundhedsloven (Styrket psykiatri og øget kapacitet på psykiatriske afdelinger)', date:'2026-03-17', result:'vedtaget', realCounts:{for:95,mod:4,und:6}, parties:{S:'for',V:'for',M:'for',SF:'for',DF:'und',EL:'for',RV:'for',LA:'und',K:'for',NB:'und',ALT:'for',DD:'for',FG:'for'} },
-    { id:5, fullTitle:'Forslag til lov om ændring af boligreguleringsloven (Loft over huslejestigninger i private lejeboliger)', date:'2026-03-15', result:'forkastet', realCounts:{for:44,mod:58,und:4}, parties:{S:'for',V:'mod',M:'mod',SF:'for',DF:'und',EL:'for',RV:'for',LA:'mod',K:'mod',NB:'mod',ALT:'for',DD:'und',FG:'for'} },
-    { id:6, fullTitle:'Forslag til lov om ændring af planloven (Lettere adgang til solcelleanlæg i landzone)', date:'2026-03-13', result:'vedtaget', realCounts:{for:100,mod:10,und:2}, parties:{S:'for',V:'for',M:'for',SF:'for',DF:'mod',EL:'for',RV:'for',LA:'for',K:'for',NB:'mod',ALT:'for',DD:'for',FG:'for'} },
-    { id:7, fullTitle:'Forslag til lov om ændring af arbejdsmarkedsloven (Nedsættelse af dagpengeperiode til 1 år)', date:'2026-03-11', result:'forkastet', realCounts:{for:30,mod:72,und:4}, parties:{S:'mod',V:'for',M:'for',SF:'mod',DF:'mod',EL:'mod',RV:'mod',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'und',FG:'mod'} },
-    { id:8, fullTitle:'Forslag til lov om ændring af folkeskoleloven (Mere dansk og matematik i udskolingen)', date:'2026-03-09', result:'vedtaget', realCounts:{for:88,mod:8,und:9}, parties:{S:'for',V:'for',M:'for',SF:'und',DF:'for',EL:'mod',RV:'for',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'for',FG:'und'} },
+    {id:1,fullTitle:'Forslag til lov om ændring af lov om fremme af vedvarende energi og biobrændstofloven',date:'2026-03-20',result:'vedtaget',realCounts:{for:81,mod:24,und:1},parties:{S:'for',V:'mod',M:'for',SF:'for',DF:'mod',EL:'for',RV:'for',LA:'mod',K:'mod',NB:'mod',ALT:'for',DD:'mod',FG:'for'}},
+    {id:2,fullTitle:'Forslag til lov om ændring af kildeskatteloven (Nedsættelse af marginalskat for høje indkomster)',date:'2026-03-19',result:'forkastet',realCounts:{for:36,mod:65,und:5},parties:{S:'mod',V:'for',M:'for',SF:'mod',DF:'for',EL:'mod',RV:'und',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'for',FG:'mod'}},
+    {id:3,fullTitle:'Forslag til lov om ændring af udlændingeloven (Skærpede regler for familiesammenføring)',date:'2026-03-18',result:'vedtaget',realCounts:{for:90,mod:20,und:2},parties:{S:'for',V:'for',M:'for',SF:'mod',DF:'for',EL:'mod',RV:'mod',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'for',FG:'mod'}},
+    {id:4,fullTitle:'Forslag til lov om ændring af sundhedsloven (Styrket psykiatri og øget kapacitet)',date:'2026-03-17',result:'vedtaget',realCounts:{for:95,mod:4,und:6},parties:{S:'for',V:'for',M:'for',SF:'for',DF:'und',EL:'for',RV:'for',LA:'und',K:'for',NB:'und',ALT:'for',DD:'for',FG:'for'}},
+    {id:5,fullTitle:'Forslag til lov om ændring af boligreguleringsloven (Loft over huslejestigninger i private lejeboliger)',date:'2026-03-15',result:'forkastet',realCounts:{for:44,mod:58,und:4},parties:{S:'for',V:'mod',M:'mod',SF:'for',DF:'und',EL:'for',RV:'for',LA:'mod',K:'mod',NB:'mod',ALT:'for',DD:'und',FG:'for'}},
+    {id:6,fullTitle:'Forslag til lov om ændring af planloven (Lettere adgang til solcelleanlæg i landzone)',date:'2026-03-13',result:'vedtaget',realCounts:{for:100,mod:10,und:2},parties:{S:'for',V:'for',M:'for',SF:'for',DF:'mod',EL:'for',RV:'for',LA:'for',K:'for',NB:'mod',ALT:'for',DD:'for',FG:'for'}},
+    {id:7,fullTitle:'Forslag til lov om ændring af arbejdsmarkedsloven (Nedsættelse af dagpengeperiode til 1 år)',date:'2026-03-11',result:'forkastet',realCounts:{for:30,mod:72,und:4},parties:{S:'mod',V:'for',M:'for',SF:'mod',DF:'mod',EL:'mod',RV:'mod',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'und',FG:'mod'}},
+    {id:8,fullTitle:'Forslag til lov om ændring af folkeskoleloven (Mere dansk og matematik i udskolingen)',date:'2026-03-09',result:'vedtaget',realCounts:{for:88,mod:8,und:9},parties:{S:'for',V:'for',M:'for',SF:'und',DF:'for',EL:'mod',RV:'for',LA:'for',K:'for',NB:'for',ALT:'mod',DD:'for',FG:'und'}},
   ];
-  return raw.map(v => ({ ...v, shortTitle: shortenTitle(v.fullTitle), category: categorize(v.fullTitle) }));
+  return raw.map(v=>({...v,shortTitle:shortenTitle(v.fullTitle),category:categorize(v.fullTitle)}));
 }
 
 init();
 </script>
-
 </body>
 </html>

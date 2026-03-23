@@ -223,53 +223,24 @@ function renderVotes() {
   }).join('');
 }
 
-// Hent titler i små batches af 5 ad gangen
-// Format: /api/Sagstrin?$filter=id eq 1 or id eq 2 or id eq 3
 async function fetchTitlesInBatches(items) {
   const titleMap = {};
   const ids = [...new Set(items.map(i => i.sagstrinid).filter(Boolean))];
-  if (ids.length === 0) { debug('Ingen sagstrinid fundet på afstemningerne'); return titleMap; }
-
-  debug('Henter titler for ' + ids.length + ' unikke sagstrin-id\'er i batches af 5...');
-
-  // Del op i grupper af 5
-  const batchSize = 5;
-  for (let i = 0; i < ids.length; i += batchSize) {
-    const batch = ids.slice(i, i + batchSize);
+  if (ids.length === 0) { debug('Ingen sagstrinid på afstemningerne'); return titleMap; }
+  debug('Henter titler for ' + ids.length + ' id\'er i batches af 5...');
+  for (let i = 0; i < ids.length; i += 5) {
+    const batch  = ids.slice(i, i+5);
     const filter = batch.map(id => `id eq ${id}`).join(' or ');
-    const url = 'https://oda.ft.dk/api/Sagstrin?$filter=' + encodeURIComponent(filter) + '&$select=id,titel&$format=json';
+    const url    = 'https://oda.ft.dk/api/Sagstrin?$filter=' + encodeURIComponent(filter) + '&$select=id,titel&$format=json';
     try {
       const res  = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status + ' på batch ' + i);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
-      (data.value||[]).forEach(st => {
-        if (st.titel) titleMap[st.id] = st.titel.trim();
-      });
+      (data.value||[]).forEach(st => { if (st.titel) titleMap[st.id] = st.titel.trim(); });
     } catch(e) {
-      debug('Batch ' + i + ' fejlede: ' + e.message + ' — prøver sag-endpoint...');
-      // Fallback: prøv /api/Sag direkte via sagid
-      try {
-        const sagIds = items.filter(it => batch.includes(it.sagstrinid)).map(it => it.sagid).filter(Boolean);
-        if (sagIds.length > 0) {
-          const sagFilter = [...new Set(sagIds)].map(id => `id eq ${id}`).join(' or ');
-          const sagUrl = 'https://oda.ft.dk/api/Sag?$filter=' + encodeURIComponent(sagFilter) + '&$select=id,titel&$format=json';
-          const sagRes  = await fetch(sagUrl);
-          const sagData = await sagRes.json();
-          // Map sagid → titel, derefter sagstrinid → titel via items
-          const sagMap = {};
-          (sagData.value||[]).forEach(s => { if (s.titel) sagMap[s.id] = s.titel.trim(); });
-          items.forEach(it => {
-            if (batch.includes(it.sagstrinid) && it.sagid && sagMap[it.sagid]) {
-              titleMap[it.sagstrinid] = sagMap[it.sagid];
-            }
-          });
-        }
-      } catch(e2) {
-        debug('Sag-fallback fejlede: ' + e2.message);
-      }
+      debug('Batch fejl: ' + e.message);
     }
   }
-
   debug('Titler hentet: ' + Object.keys(titleMap).length + ' af ' + ids.length);
   return titleMap;
 }
@@ -280,7 +251,7 @@ function mapItems(items, titleMap) {
     const result    = parseResult(item.konklusion);
     return {
       id:         item.id,
-      fullTitle:  fullTitle,
+      fullTitle,
       shortTitle: fullTitle ? shortenTitle(fullTitle) : ('Afstemning #' + item.id),
       date:       (item.opdateringsdato||'').split('T')[0],
       category:   fullTitle ? categorize(fullTitle) : 'Andet',
@@ -299,9 +270,8 @@ async function loadMore() {
     const res  = await fetch(nextUrl);
     const data = await res.json();
     nextUrl = data['@odata.nextLink'] || null;
-    const items = data.value || [];
-    const titleMap = await fetchTitlesInBatches(items);
-    allVotes = allVotes.concat(mapItems(items, titleMap));
+    const titleMap = await fetchTitlesInBatches(data.value||[]);
+    allVotes = allVotes.concat(mapItems(data.value||[], titleMap));
     updateStats(allVotes); renderVotes();
   } catch(e) { debug('loadMore fejl: '+e.message); }
   btn.disabled=false; btn.textContent='Vis flere afstemninger';
@@ -310,8 +280,8 @@ async function loadMore() {
 
 async function init() {
   try {
-    // Trin 1: hent afstemninger inkl. sagstrinid og sagid
-    const url = 'https://oda.ft.dk/api/Afstemning?$orderby=id%20desc&$top=50&$format=json&$select=id,sagstrinid,sagid,konklusion,opdateringsdato';
+    // Kun de tre parametre vi ved virker
+    const url = 'https://oda.ft.dk/api/Afstemning?$orderby=id%20desc&$top=50&$format=json';
     debug('Henter afstemninger...');
     const res  = await fetch(url);
     debug('HTTP status: ' + res.status);
@@ -321,27 +291,25 @@ async function init() {
     nextUrl = data['@odata.nextLink'] || null;
     debug('Modtog ' + items.length + ' afstemninger');
 
-    // Tjek at vi har sagstrinid
-    const withId = items.filter(i => i.sagstrinid).length;
-    debug(withId + ' af ' + items.length + ' har sagstrinid');
+    // Vis første felt fra første item så vi kan se hvad API'et returnerer
+    if (items.length > 0) {
+      debug('Felter i første afstemning: ' + Object.keys(items[0]).join(', '));
+      debug('sagstrinid på første: ' + items[0].sagstrinid);
+    }
 
-    // Trin 2: hent titler i batches
     const titleMap = await fetchTitlesInBatches(items);
-
     allVotes = mapItems(items, titleMap);
+
     document.getElementById('loading-bar').style.display = 'none';
     updateStats(allVotes);
     renderVotes();
 
-    const btn = document.getElementById('load-more-btn');
-    btn.style.display = nextUrl ? 'inline-block' : 'none';
-
+    document.getElementById('load-more-btn').style.display = nextUrl ? 'inline-block' : 'none';
     const now = new Date().toLocaleString('da-DK',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     document.getElementById('last-updated').textContent = 'Opdateret ' + now;
 
-    // Skjul debug hvis titler kom igennem
     if (Object.keys(titleMap).length > 5) {
-      setTimeout(() => { document.getElementById('debug-box').style.display = 'none'; }, 3000);
+      setTimeout(() => { document.getElementById('debug-box').style.display = 'none'; }, 4000);
     }
 
   } catch(e) {

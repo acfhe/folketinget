@@ -176,9 +176,49 @@ function formatDate(s) {
   return new Date(s).toLocaleDateString('da-DK',{day:'numeric',month:'short',year:'numeric'});
 }
 
-function makeParties(result) {
-  const p={}, won=result==='vedtaget';
-  PARTIES.forEach(k=>{ const x=Math.random(); p[k]=won?(x<.58?'for':x<.80?'mod':'und'):(x<.28?'for':x<.82?'mod':'und'); });
+function parsePartyVotesFromKonklusion(konklusion) {
+  const t = (konklusion || '').toString();
+
+  // Konklusion-formatet indeholder typisk:
+  // "For stemte X (S, V, ...), imod stemte Y (DD, ...), hverken for eller imod stemte Z (BP)."
+  // Vi udleder hvilke partier der står i hver del og matcher dem mod `PARTIES`.
+  const allowed = new Set(PARTIES);
+  const normalizePartyToken = (tok) => {
+    const u = (tok || '').toUpperCase();
+    // ODA kan bruge historiske/forskellige forkortelser for samme parti.
+    if (u === 'KF') return 'K';
+    return u;
+  };
+
+  const getBlock = (startRe, endReOrNull) => {
+    const start = t.search(startRe);
+    if (start < 0) return '';
+    const afterStart = t.slice(start);
+    const endLocal = endReOrNull ? afterStart.search(endReOrNull) : -1;
+    return endLocal >= 0 ? afterStart.slice(0, endLocal) : afterStart;
+  };
+
+  const forBlock  = getBlock(/For stemte\s+\d+\s*\(/i, /imod stemte\s+\d+\s*\(/i);
+  const modBlock  = getBlock(/imod stemte\s+\d+\s*\(/i, /hverken for eller imod stemte\s+\d+\s*\(/i);
+  const undBlock  = getBlock(/hverken for eller imod stemte\s+\d+\s*\(/i, null);
+
+  const extractParties = (block) => {
+    const rawTokens = (block || '').toUpperCase().match(/\b[A-Z]{1,4}\b/g) || [];
+    return rawTokens
+      .map(normalizePartyToken)
+      .filter((p) => allowed.has(p));
+  };
+
+  const forCodes = extractParties(forBlock);
+  const modCodes = extractParties(modBlock);
+  const undCodes = extractParties(undBlock);
+
+  const p = {};
+  PARTIES.forEach(code => {
+    if (forCodes.includes(code)) p[code] = 'for';
+    else if (modCodes.includes(code)) p[code] = 'mod';
+    else if (undCodes.includes(code)) p[code] = 'und';
+  });
   return p;
 }
 
@@ -257,7 +297,7 @@ function mapItems(items, titleMap) {
       category:   fullTitle ? categorize(fullTitle) : 'Andet',
       result,
       realCounts: parseCounts(item.konklusion),
-      parties:    makeParties(result),
+      parties:    parsePartyVotesFromKonklusion(item.konklusion),
     };
   });
 }

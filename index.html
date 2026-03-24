@@ -47,6 +47,7 @@
   .vote-card:hover { border-color: var(--border-strong); }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 3px; }
   .vote-short-title { font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--text); flex: 1; letter-spacing: -0.2px; }
+  .vote-meta-line { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; margin-top: 4px; }
   .vote-date { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; white-space: nowrap; margin-top: 3px; }
   .vote-full-title { font-size: 12px; color: var(--text-3); line-height: 1.4; margin-bottom: 10px; font-style: italic; }
   .card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -156,6 +157,28 @@ function shortenTitle(raw) {
   t = t[0].toUpperCase()+t.slice(1);
   if (t.length>80) { const c=t.indexOf(','); if(c>20) t=t.slice(0,c); }
   return t.length>90?t.slice(0,88)+'…':(t||raw.slice(0,80));
+}
+
+function cleanUserTitle(raw) {
+  if (!raw) return '';
+  return raw
+    .replace(/\s+/g, ' ')
+    .replace(/^om at\s+/i, '')
+    .replace(/^om\s+/i, '')
+    .trim();
+}
+
+function getSagsTypeLabel(nummer) {
+  const prefix = ((nummer || '').trim().split(/\s+/)[0] || '').toUpperCase();
+  const labels = {
+    L: 'Lovforslag',
+    B: 'Beslutningsforslag',
+    V: 'Vedtagelsestekst',
+    R: 'Redegørelse',
+    S: 'Spørgsmål',
+    F: 'Forespørgsel'
+  };
+  return labels[prefix] || (prefix ? `Sagstype ${prefix}` : 'Sag');
 }
 
 function categorize(t) {
@@ -312,9 +335,10 @@ function renderVotes() {
     const fp=Math.round(forC/total*100), mp=Math.round(modC/total*100), up=100-fp-mp;
     const rb = vote.result==='vedtaget'?`<span class="badge badge-vedtaget">Vedtaget</span>`:vote.result==='forkastet'?`<span class="badge badge-forkastet">Forkastet</span>`:`<span class="badge badge-ukendt">Ukendt</span>`;
     const chips = PARTIES.map(p=>{ const v=vote.parties[p]||'und',cls=v==='for'?'chip-for':v==='mod'?'chip-mod':'chip-und',lbl=v==='for'?'For':v==='mod'?'Imod':'Und.'; return `<div class="party-chip ${cls}" title="${PARTY_NAMES[p]}: ${lbl}"><span class="party-abbr">${p}</span><span class="party-vote-label">${lbl}</span></div>`; }).join('');
-    const showFull = vote.fullTitle && vote.shortTitle!==vote.fullTitle && vote.fullTitle.length>vote.shortTitle.length+10;
+    const showFull = vote.fullTitle && vote.shortTitle!==vote.fullTitle;
+    const typeMeta = vote.number ? `${vote.typeLabel} (${vote.number})` : vote.typeLabel;
     return `<div class="vote-card">
-      <div class="card-top"><div class="vote-short-title">${vote.shortTitle}</div><div class="vote-date">${formatDate(vote.date)}</div></div>
+      <div class="card-top"><div><div class="vote-short-title">${vote.shortTitle}</div><div class="vote-meta-line">${typeMeta}</div></div><div class="vote-date">${formatDate(vote.date)}</div></div>
       ${showFull?`<div class="vote-full-title">${vote.fullTitle}</div>`:''}
       <div class="card-badges"><span class="badge badge-cat">${vote.category}</span>${rb}</div>
       <div class="vote-bar"><div class="bar-for" style="width:${fp}%"></div><div class="bar-mod" style="width:${mp}%"></div><div class="bar-und" style="width:${up}%"></div></div>
@@ -326,11 +350,14 @@ function renderVotes() {
 
 async function fetchMetaInBatches(items) {
   const titleMap = {};
+  const shortTitleMap = {};
+  const numberMap = {};
+  const typeLabelMap = {};
   const categoryMap = {};
   const sagstrinIds = [...new Set(items.map(i => i.sagstrinid).filter(Boolean))];
   if (sagstrinIds.length === 0) {
     debug('Ingen sagstrinid på afstemningerne');
-    return { titleMap, categoryMap };
+    return { titleMap, shortTitleMap, numberMap, typeLabelMap, categoryMap };
   }
 
   const sagstrinById = {};
@@ -350,7 +377,7 @@ async function fetchMetaInBatches(items) {
   }
 
   const sagIds = [...new Set(Object.values(sagstrinById).map(st => st.sagid).filter(Boolean))];
-  const sagTitleById = {};
+  const sagMetaById = {};
   debug('Henter sager for ' + sagIds.length + ' id\'er i batches af 5...');
   for (let i = 0; i < sagIds.length; i += 5) {
     const batch  = sagIds.slice(i, i+5);
@@ -361,9 +388,13 @@ async function fetchMetaInBatches(items) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       (data.value||[]).forEach(sag => {
-        const base = (sag.titelkort || sag.titel || '').trim();
-        if (!base) return;
-        sagTitleById[sag.id] = sag.nummer ? `${sag.nummer}: ${base}` : base;
+        const officialTitle = (sag.titel || sag.titelkort || '').trim();
+        const displayBase = cleanUserTitle((sag.titelkort || sag.titel || '').trim());
+        sagMetaById[sag.id] = {
+          officialTitle: officialTitle || null,
+          shortTitle: displayBase || null,
+          number: (sag.nummer || '').trim()
+        };
       });
     } catch(e) {
       debug('Sag-batch fejl: ' + e.message);
@@ -413,28 +444,33 @@ async function fetchMetaInBatches(items) {
   sagstrinIds.forEach(id => {
     const st = sagstrinById[id];
     if (!st) return;
-    const sagTitle = sagTitleById[st.sagid];
+    const sagMeta = sagMetaById[st.sagid] || null;
     const emneordList = [...(emneordIdsBySagId[st.sagid] || [])]
       .map(eid => emneordTextById[eid])
       .filter(Boolean);
     // Fald tilbage til sagstrin-titel hvis vi ikke kunne slå sagen op.
-    titleMap[id] = sagTitle || (st.titel ? st.titel.trim() : null);
+    titleMap[id] = (sagMeta && sagMeta.officialTitle) || (st.titel ? st.titel.trim() : null);
+    shortTitleMap[id] = (sagMeta && sagMeta.shortTitle) || (titleMap[id] ? shortenTitle(titleMap[id]) : null);
+    numberMap[id] = (sagMeta && sagMeta.number) || '';
+    typeLabelMap[id] = getSagsTypeLabel(numberMap[id]);
     categoryMap[id] = categorizeFromEmneord(emneordList, titleMap[id] || st.titel || '');
   });
 
   debug('Titler hentet: ' + Object.keys(titleMap).length + ' af ' + sagstrinIds.length);
   debug('Emner hentet: ' + Object.keys(categoryMap).length + ' af ' + sagstrinIds.length);
-  return { titleMap, categoryMap };
+  return { titleMap, shortTitleMap, numberMap, typeLabelMap, categoryMap };
 }
 
-function mapItems(items, titleMap, categoryMap = {}) {
+function mapItems(items, titleMap, shortTitleMap = {}, numberMap = {}, typeLabelMap = {}, categoryMap = {}) {
   return items.map(item => {
     const fullTitle = titleMap[item.sagstrinid] || null;
     const result    = parseResult(item.konklusion);
     return {
       id:         item.id,
       fullTitle,
-      shortTitle: fullTitle ? shortenTitle(fullTitle) : ('Afstemning #' + item.id),
+      shortTitle: shortTitleMap[item.sagstrinid] || (fullTitle ? shortenTitle(fullTitle) : ('Afstemning #' + item.id)),
+      number:     numberMap[item.sagstrinid] || '',
+      typeLabel:  typeLabelMap[item.sagstrinid] || 'Sag',
       date:       (item.opdateringsdato||'').split('T')[0],
       category:   categoryMap[item.sagstrinid] || (fullTitle ? categorize(fullTitle) : 'Andet'),
       result,
@@ -452,8 +488,8 @@ async function loadMore() {
     const res  = await fetch(nextUrl);
     const data = await res.json();
     nextUrl = data['@odata.nextLink'] || null;
-    const { titleMap, categoryMap } = await fetchMetaInBatches(data.value||[]);
-    allVotes = allVotes.concat(mapItems(data.value||[], titleMap, categoryMap));
+    const { titleMap, shortTitleMap, numberMap, typeLabelMap, categoryMap } = await fetchMetaInBatches(data.value||[]);
+    allVotes = allVotes.concat(mapItems(data.value||[], titleMap, shortTitleMap, numberMap, typeLabelMap, categoryMap));
     renderCategoryFilters();
     updateStats(allVotes); renderVotes();
   } catch(e) { debug('loadMore fejl: '+e.message); }
@@ -480,8 +516,8 @@ async function init() {
       debug('sagstrinid på første: ' + items[0].sagstrinid);
     }
 
-    const { titleMap, categoryMap } = await fetchMetaInBatches(items);
-    allVotes = mapItems(items, titleMap, categoryMap);
+    const { titleMap, shortTitleMap, numberMap, typeLabelMap, categoryMap } = await fetchMetaInBatches(items);
+    allVotes = mapItems(items, titleMap, shortTitleMap, numberMap, typeLabelMap, categoryMap);
 
     document.getElementById('loading-bar').style.display = 'none';
     renderCategoryFilters();
